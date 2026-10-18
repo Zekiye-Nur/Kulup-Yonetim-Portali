@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atatürk Anadolu Lisesi - Kulüp Yönetim Portalı</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- İstatistik Alanı -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Okul Toplam Kapasitesi</h4>
+                <span>1000 Öğrenci</span>
+            </div>
+            <div class="stat-card" style="border-left-color: var(--success-color);">
+                <h4>Kayıtlı Öğrenci Sayısı</h4>
+                <span id="statToplamOgrenci">0 Öğrenci</span>
+            </div>
+            <div class="stat-card" style="border-left-color: #f59e0b;">
+                <h4>Aktif Kulüp Sayısı</h4>
+                <span>25</span>
+            </div>
+            <div class="stat-card" style="border-left-color: #ef4444;">
+                <h4>Toplam Boş Kontenjan</h4>
+                <span id="statToplamBos">1000 Kontenjan</span>
+            </div>
+        </div>
+
+        <!-- Ana Grid Yapısı -->
+        <div class="main-grid">
+            <!-- Sol Kolon: İşlem Panelleri -->
+            <div class="left-column">
+                <!-- Öğrenci Kayıt Paneli -->
+                <div class="panel-box">
+                    <h2>📝 Öğrenci Kulüp Kaydı</h2>
+                    <form id="ogrenciFormu">
+                        <label>Kulüp Seçin:</label>
+                        <select id="kulupSecim" required>
+                            <option value="">-- Kulüp Seçiniz --</option>
+                        </select>
+
+                        <label>Öğrenci Adı Soyadı:</label>
+                        <input type="text" id="ogrenciAd" placeholder="Örn: Ahmet Yılmaz" required>
+
+                        <div style="display: flex; gap: 10px;">
+                            <div style="flex: 1;">
+                                <label>Sınıf Seviyesi:</label>
+                                <select id="seviyeSecim">
+                                    <option value="9. Sınıf">9. Sınıf</option>
+                                    <option value="10. Sınıf">10. Sınıf</option>
+                                    <option value="11. Sınıf">11. Sınıf</option>
+                                    <option value="12. Sınıf">12. Sınıf</option>
+                                </select>
+                            </div>
+                            <div style="flex: 1;">
+                                <label>Şube:</label>
+                                <select id="subeSecim">
+                                    <option value="A Şubesi">A Şubesi</option>
+                                    <option value="B Şubesi">B Şubesi</option>
+                                    <option value="C Şubesi">C Şubesi</option>
+                                    <option value="D Şubesi">D Şubesi</option>
+                                    <option value="E Şubesi">E Şubesi</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-yesil">Öğrenciyi Kaydet</button>
+                    </form>
+                </div>
+
+                <!-- Akıllı Öneri Sihirbazı -->
+                <div class="panel-box">
+                    <h2>💡 Akıllı Kulüp Öneri Sihirbazı</h2>
+                    <label>İlgi Alanınızı Seçin:</label>
+                    <select id="ilgiAlaniSec">
+                        <option value="Yazılım & Teknoloji">Yazılım & Teknoloji</option>
+                        <option value="Akademik & Bilim">Akademik & Bilim</option>
+                        <option value="Oyun & Sanat">Oyun & Sanat</option>
+                        <option value="Spor">Spor</option>
+                        <option value="Sosyal Sorumluluk">Sosyal Sorumluluk</option>
+                    </select>
+                    <button type="button" class="btn btn-mavi" onclick="kulupOnerisiGetir()">Bana Uygun Kulüpleri Bul</button>
+                    <div id="oneriSonucAlani" style="margin-top: 10px;"></div>
+                </div>
+
+                <!-- Öğretmen Yönetim Paneli -->
+                <div class="panel-box">
+                    <h2>🔒 Öğretmen Yönetim Paneli</h2>
+                    <div id="girisAlani">
+                        <label>Yetkili Öğretmen Şifresi:</label>
+                        <input type="password" id="sifreInput" placeholder="Yetkili şifrenizi giriniz...">
+                        <button type="button" class="btn btn-mavi" onclick="girisYap()">Giriş Yap</button>
+                    </div>
+
+                    <div id="yonetimPaneli" style="display: none; margin-top: 15px;">
+                        <label>Yönetilecek Kulüp:</label>
+                        <select id="yonetimKulupSec" onchange="panelGuncelle()"></select>
+
+                        <label>Danışman Öğretmen 1:</label>
+                        <input type="text" id="ogretmen1Ad" placeholder="Örn: Ahmet Hoca">
+
+                        <label>Danışman Öğretmen 2:</label>
+                        <input type="text" id="ogretmen2Ad" placeholder="Örn: Mehmet Hoca">
+                        <button type="button" class="btn btn-mavi" onclick="ogretmenleriKaydet()">Danışmanları Kaydet</button>
+
+                        <hr style="margin: 15px 0; border-color: var(--border-color);">
+
+                        <label>Kulüp Başkanı:</label>
+                        <select id="baskanSec"></select>
+
+                        <label>Kulüp Başkan Yardımcısı:</label>
+                        <select id="yardimciSec"></select>
+                        <button type="button" class="btn btn-yesil" onclick="yonetimKaydet()">Yönetimi Güncelle</button>
+
+                        <hr style="margin: 15px 0; border-color: var(--border-color);">
+
+                        <h3 style="font-size: 14px; color: var(--primary-color); margin-bottom: 8px;">Kayıtlı Öğrenciler</h3>
+                        <input type="text" id="ogrenciArama" placeholder="Öğrenci ara..." onkeyup="ogrenciFiltrele()" style="margin-bottom: 8px;">
+                        <div id="ogrenciListe"></div>
+
+                        <div style="display: flex; gap: 10px; margin-top: 15px;">
+                            <button type="button" class="btn btn-mavi" onclick="excelIndir()" style="background-color: #0d9488;">Excel İndir</button>
+                            <button type="button" class="btn btn-mavi" onclick="listeyiYazdir()" style="background-color: #475569;">Resmi Liste Yazdır</button>
+                        </div>
+
+                        <hr style="margin: 15px 0; border-color: var(--border-color);">
+
+                        <h3 style="font-size: 14px; color: var(--primary-color); margin-bottom: 8px;">Etkinlik / Duyuru Ekle</h3>
+                        <label>Etkinlik Başlığı:</label>
+                        <input type="text" id="etkinlikBaslik" placeholder="Örn: Turnuva Başlıyor">
+                        <label>Tarih:</label>
+                        <input type="date" id="etkinlikTarih">
+                        <label>Açıklama:</label>
+                        <textarea id="etkinlikAciklama" rows="2" placeholder="Detaylar..."></textarea>
+                        <button type="button" class="btn btn-yesil" onclick="etkinlikEkle()">Etkinlik Yayınla</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sağ Kolon: Kulüp Kartları & Etkinlik Takvimi -->
+            <div class="right-column">
+                <!-- Etkinlikler ve Duyurular -->
+                <div class="panel-box">
+                    <h2>📅 Etkinlikler ve Duyurular</h2>
+                    <div id="etkinlikListesi" style="display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto;"></div>
+                </div>
+
+                <!-- Kulüpler Listesi -->
+                <div class="panel-box">
+                    <h2>🏛️ Okul Kulüpleri</h2>
+                    <input type="text" id="kulupArama" placeholder="Kulüp veya kategori ara..." onkeyup="kulupFiltrele()" style="margin-bottom: 12px;">
+                    <div id="kulupKartlari" class="kulup-grid"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
